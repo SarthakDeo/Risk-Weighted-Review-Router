@@ -5,26 +5,41 @@ import type { HealthResponse } from '../types';
 export function HealthBadge() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [error, setError] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+
     const check = async () => {
       try {
         const h = await fetchHealth();
-        if (active) { setHealth(h); setError(false); }
+        if (active) {
+          setHealth(h);
+          setError(false);
+          setIsRetrying(false);
+          timer = setTimeout(check, 15_000);
+        }
       } catch {
-        if (active) setError(true);
+        if (active) {
+          setError(true);
+          setIsRetrying(true);
+          timer = setTimeout(check, 3_000);
+        }
       }
     };
+
     check();
-    const id = setInterval(check, 15_000);
-    return () => { active = false; clearInterval(id); };
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, []);
 
   if (error) {
     return (
       <span className="badge badge-error">
-        <span className="dot" /> Backend offline
+        <span className="dot" /> {isRetrying ? 'Connecting (Backend waking up…)' : 'Backend offline'}
       </span>
     );
   }
@@ -37,3 +52,4 @@ export function HealthBadge() {
     </span>
   );
 }
+

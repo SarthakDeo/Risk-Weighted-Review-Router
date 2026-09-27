@@ -1,6 +1,6 @@
 import type { ScoreRequest, ScoreResponse, HealthResponse } from './types';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? 'https://risk-weighted-review-router.onrender.com').replace(/\/$/, '');
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
 
 export async function scorePR(req: ScoreRequest): Promise<ScoreResponse> {
   const res = await fetch(`${API_BASE}/score`, {
