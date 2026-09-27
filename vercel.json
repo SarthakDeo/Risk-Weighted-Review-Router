@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/score",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/webhook",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/health",
+      "dest": "src/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/$1"
+    }
+  ]
+}
