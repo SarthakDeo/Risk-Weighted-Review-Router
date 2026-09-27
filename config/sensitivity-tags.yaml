@@ -1,0 +1,23 @@
+categories:
+  payments:
+    patterns:
+      - "services/payments/**"
+      - "billing/**"
+  auth:
+    patterns:
+      - "auth/**"
+      - "services/auth/**"
+  data_deletion:
+    patterns:
+      - "**/delete/**"
+      - "**/purge/**"
+  infrastructure:
+    patterns:
+      - "infra/**"
+      - "terraform/**"
+      - "*.tf"
+  infrastructure-as-code:
+    patterns:
+      - "infra/**"
+      - "terraform/**"
+      - "*.tf"

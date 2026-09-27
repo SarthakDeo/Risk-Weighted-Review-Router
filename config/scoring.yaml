@@ -1,0 +1,29 @@
+scoring:
+  weights:
+    incident: 0.30
+    revert: 0.10
+    hotfix: 0.10
+    bug_fix: 0.15
+    churn: 0.10
+    sensitivity: 0.15
+    blast_radius: 0.10
+  normalize:
+    incident_max: 5
+    revert_max: 5
+    hotfix_max: 5
+    bug_fix_max: 1
+    churn_max: 500
+    blast_radius_max: 20
+  tiers:
+    low_max: 0.39
+    medium_max: 0.69
+  incident_window_days: 180
+  tags:
+    payments: 0.2
+    auth: 0.2
+    data_deletion: 0.35
+    infrastructure: 0.25
+  feature_flags:
+    enable_sensitivity: true
+    enable_blast_radius: true
+    enable_feedback_loop: true
