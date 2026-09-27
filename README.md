@@ -19,6 +19,8 @@ It builds a risk map and exposes:
 
 ## Local development
 
+### Backend
+
 1. Install dependencies:
    ```bash
    npm install
@@ -29,19 +31,40 @@ It builds a risk map and exposes:
    ```
 3. Run migrations:
    ```bash
-  $env:DATABASE_URL = 'postgresql://riskuser:riskpass@localhost:5432/risk_router'
-  npm run db:migrate
+   $env:DATABASE_URL = 'postgresql://riskuser:riskpass@localhost:5432/risk_router'
+   npm run db:migrate
    ```
-4. Start the service:
+4. Start the backend service:
    ```bash
    npm run dev
    ```
-5. Test the API:
+
+### Frontend
+
+The frontend is a React + Vite app located in the `frontend/` directory.
+
+5. In a separate terminal, install frontend dependencies and start the dev server:
    ```bash
-   curl -X POST http://localhost:3000/score \
-     -H 'Content-Type: application/json' \
-     -d '{"pr_id":"PR-123","changed_files":["services/payments/charge.go"]}'
+   cd frontend
+   npm install
+   npm run dev
    ```
+   The UI is available at **http://localhost:5173**.
+   API calls are proxied to the backend on port 3000 automatically.
+
+### Docker (frontend only)
+
+To run the frontend via Docker Compose:
+```bash
+docker compose up frontend
+```
+
+### Test the API directly
+```bash
+curl -X POST http://localhost:3000/score \
+  -H 'Content-Type: application/json' \
+  -d '{"pr_id":"PR-123","changed_files":["services/payments/charge.go"]}'
+```
 
 ## API contract
 
