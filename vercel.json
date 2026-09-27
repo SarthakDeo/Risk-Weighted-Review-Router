@@ -7,28 +7,27 @@
       "config": {
         "distDir": "dist"
       }
-    },
-    {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "src/index.ts"
+      "dest": "https://risk-weighted-review-router.onrender.com/$1"
     },
     {
       "src": "/score",
-      "dest": "src/index.ts"
-    },
-    {
-      "src": "/webhook",
-      "dest": "src/index.ts"
+      "dest": "https://risk-weighted-review-router.onrender.com/score"
     },
     {
       "src": "/health",
-      "dest": "src/index.ts"
+      "dest": "https://risk-weighted-review-router.onrender.com/health"
+    },
+    {
+      "src": "/webhook",
+      "dest": "https://risk-weighted-review-router.onrender.com/webhook"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",

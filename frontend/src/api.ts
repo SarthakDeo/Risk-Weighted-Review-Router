@@ -1,9 +1,9 @@
 import type { ScoreRequest, ScoreResponse, HealthResponse } from './types';
 
-const BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? 'https://risk-weighted-review-router.onrender.com').replace(/\/$/, '');
 
 export async function scorePR(req: ScoreRequest): Promise<ScoreResponse> {
-  const res = await fetch(`${BASE}/score`, {
+  const res = await fetch(`${API_BASE}/score`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(req),
@@ -16,7 +16,8 @@ export async function scorePR(req: ScoreRequest): Promise<ScoreResponse> {
 }
 
 export async function fetchHealth(): Promise<HealthResponse> {
-  const res = await fetch(`${BASE}/health`);
+  const res = await fetch(`${API_BASE}/health`);
   if (!res.ok) throw new Error('Backend unreachable');
   return res.json();
 }
+
