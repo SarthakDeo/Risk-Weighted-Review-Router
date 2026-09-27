@@ -1,6 +1,6 @@
-# Risk-Weighted Review Router — Person A
+# Risk-Weighted Review Router — Combined Service
 
-This project implements the backend risk intelligence for the Risk-Weighted Review Router. It is completely separated from the GitHub workflow layer and exposes a stable scoring API for Person B.
+This project combines both workstreams. Person A owns risk ingestion, the risk map, scoring, and feedback. Person B's workflow layer receives GitHub webhooks, routes reviewers, annotates pull requests, and enforces approval gates.
 
 ## Overview
 
@@ -11,6 +11,8 @@ The service ingests:
 
 It builds a risk map and exposes:
 - `POST /score`
+- `POST /webhook` for GitHub `pull_request` and `pull_request_review` events
+- `GET /health`
 - nightly refresh pipeline
 - explainable scoring reasons
 - Postgres-ready schema and migrations
@@ -21,13 +23,14 @@ It builds a risk map and exposes:
    ```bash
    npm install
    ```
-2. Start Postgres if you want the database-backed mode:
+2. Start Postgres for the persistent risk map:
    ```bash
    docker compose up -d postgres
    ```
 3. Run migrations:
    ```bash
-   DATABASE_URL=postgresql://riskuser:riskpass@localhost:5432/risk_router npm run db:migrate
+  $env:DATABASE_URL = 'postgresql://riskuser:riskpass@localhost:5432/risk_router'
+  npm run db:migrate
    ```
 4. Start the service:
    ```bash
@@ -91,7 +94,8 @@ Edit the YAML files under `config/` to adjust:
 
 ## Important constraints
 
-- Person A owns the risk computation boundary.
-- Person B only sends the PR and changed file list.
-- No GitHub webhook or GitHub check code exists here.
+- Person A owns the risk computation boundary and stable `/score` contract.
+- Person B owns the GitHub webhook, routing, annotation, and approval gate layers.
+- Set `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY_PATH`, and `GITHUB_WEBHOOK_SECRET` to enable GitHub workflow events.
+- Set `SCORING_SERVICE_STUB=true` only for workflow demos; the unified pipeline otherwise calls the in-process Person A scorer.
 - The scoring contract is intentionally stable.

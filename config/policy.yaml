@@ -1,0 +1,25 @@
+tiers:
+  low:
+    label: "Low Risk"
+    required_approvals: 1
+    require_reviewer_with_history: false
+    checklist_id: "low"
+    status_check_name: "review-router/low"
+    description: "Standard single-reviewer approval. No extra ceremony."
+  medium:
+    label: "Medium Risk"
+    required_approvals: 2
+    require_reviewer_with_history: false
+    checklist_id: "medium"
+    status_check_name: "review-router/medium"
+    description: "Two approvals required. Category checklist attached."
+  high:
+    label: "High Risk"
+    required_approvals: 2
+    require_reviewer_with_history: true
+    checklist_id: "high"
+    status_check_name: "review-router/high"
+    description: "Two approvals required, including a reviewer with history on affected files."
+thresholds:
+  low_max: 0.39
+  medium_max: 0.69

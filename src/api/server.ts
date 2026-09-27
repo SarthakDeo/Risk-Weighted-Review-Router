@@ -1,16 +1,24 @@
-import express from 'express';
+import express, { Request } from 'express';
 import { z } from 'zod';
 import { logger } from '../logger.js';
 import { calculateScoreFromPR } from '../scoring/score.js';
+import { processWebhook } from '../workflow/prListener.js';
+import { processPR } from '../workflow/pipeline.js';
+import { reEvaluateGate } from '../workflow/pipeline.js';
+import { calculateScoreFromPR as scorePR } from '../scoring/score.js';
 
 const requestSchema = z.object({
-  pr_id: z.string().min(1),
+  pr_id: z.union([z.string().min(1), z.number()]),
   changed_files: z.array(z.string().min(1)).min(1),
 });
 
 export function buildApp() {
   const app = express();
-  app.use(express.json());
+  app.use(express.json({
+    verify: (req: Request & { rawBody?: Buffer }, _res, buffer) => {
+      req.rawBody = buffer;
+    },
+  }));
 
   app.get('/', (_req, res) => {
     return res.json({
@@ -18,6 +26,10 @@ export function buildApp() {
       status: 'ok',
       scoring_endpoint: 'POST /score',
     });
+  });
+
+  app.get('/health', (_req, res) => {
+    return res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
   app.post('/score', async (req, res) => {
@@ -43,6 +55,18 @@ export function buildApp() {
         error: { code: 'SERVER_ERROR', message: 'Unable to calculate risk score' },
       });
     }
+  });
+
+  app.post('/webhook', async (req, res) => {
+    await processWebhook(
+      req,
+      res,
+      processPR,
+      async (metadata) => {
+        const score = await scorePR(metadata.changed_files.map((file) => file.filename));
+        await reEvaluateGate(metadata, score.risk_tier);
+      },
+    );
   });
 
   return app;
